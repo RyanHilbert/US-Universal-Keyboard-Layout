@@ -1,5 +1,9 @@
 # US Universal Keyboard Layout
 A native keyboard layout for Windows that enables simple typing of complex characters.
+## Installation and Use
+Simply download and run the installer from the Releases page. You can then select the United States-Universal layout from the Windows language and keyboard options menu.
+## How it Works
+The Node.kt Kotlin source file is used to programmatically generate the hundreds of different Compose key sequences (manipulated internally as a rooted directed acyclic graph) and convert them into a format understood by the software KbdEdit. The rest of the layout features and the installer are created directly with KbdEdit itself.
 ## Applications
 The layout supports a wide range of use cases. Its various new modifier keys can be held to access an array of supplementary characters, while the Compose key (Right-Ctrl) can be pressed as the beginning of a sequence to combine standard characters into more interesting ones.
 ### International
