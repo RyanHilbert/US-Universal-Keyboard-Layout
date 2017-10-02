@@ -1,7 +1,7 @@
 # US Universal Keyboard Layout
 A native keyboard layout for Windows that enables simple typing of complex characters.
 ## Applications
-The layout supports a wide range of use cases. The various new modifier keys can be held to access an array of supplementary characters, while the Compose key (Right-Ctrl) can be pressed as the beginning of a sequence to combine standard characters into exotic ones.
+The layout supports a wide range of use cases. Its various new modifier keys can be held to access an array of supplementary characters, while the Compose key (Right-Ctrl) can be pressed as the beginning of a sequence to combine standard characters into more interesting ones.
 ### International
 Improving upon the US International layout, the Compose (Right-Ctrl) and AltGR (Right-Alt) keys can be used to directly access a multitude of international characters, such as ligatures, accented vowels, and foreign currency symbols.
 ### Mathematics
