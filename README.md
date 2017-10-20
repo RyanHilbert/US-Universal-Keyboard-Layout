@@ -5,18 +5,20 @@ Simply download and run the installer from the Releases page. You can then selec
 ## How it Works
 The Node.kt Kotlin source file is used to programmatically generate the hundreds of different Compose key sequences and convert them into a format understood by the software KbdEdit. The rest of the layout features and the installer are created directly with KbdEdit itself.
 ## Applications
-The layout supports a wide range of use cases. Its various new modifier keys can be held to access an array of supplementary characters, while the Compose key (Right-Ctrl) can be pressed as the beginning of a sequence to combine standard characters into more interesting ones.
+The layout supports a wide range of use cases. Its modifier keys can be held to access an array of supplementary characters, while the Compose key (Right-Ctrl) can be pressed as the beginning of a sequence to combine standard characters into more interesting ones.
 ### International
 Improving upon the US International layout, the Compose (Right-Ctrl) and AltGR (Right-Alt) keys can be used to directly access a multitude of international characters, such as ligatures, accented vowels, and foreign currency symbols.
 ### Financial
-The Compose key enables simple, intuitive input of most of the world's currency symbols, via sequences involving the dollar sign ($) key.
+The Compose key enables simple, intuitive input of most of the world's currency symbols via sequences involving the dollar sign ($).
 ### Mathematics
 The Compose key also allows input of various mathematical symbols and constants; integrals, inequalities, and other operators are all supported. Additionally, the AltGR (Right-Alt) key allows access to Greek characters, and CapsLock enables super/subscripts.
 ### Science
 2Mn²⁺ + 5S₂O₈²⁻ + 8H₂O → 2MnO₄ + 10SO₄²⁻ + 16H⁺
+
+With NumLock enabled, modifiers (such as Right-Alt) can be held while pressing NumPad keys to type their corresponding arrows, and CapsLock has been repurposed to input super/subscripted characters.
 ### Social
 ☺ ❀ ☃ ⚘ ❤
-### Normal Stuff
+### Everything else
 Even with so many features, this layout tries to stay out of your way during everyday typing. The only keys with different behaviors than in the standard US layout are:
 - CapsLock now enables super/subscripts instead of capitals
 - The Right-Alt key can now be used as a modifier key to type Greek characters
@@ -24,6 +26,7 @@ Even with so many features, this layout tries to stay out of your way during eve
 ## Example Composition Sequences
 ⎄ = Compose Key (Right-Ctrl)
 - ⎄<3 → ❤
+- ⎄$E → €
 - ⎄<- → ≤
 - ⎄/= → ≠
 - ⎄3S → ∭
