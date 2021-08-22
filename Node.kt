@@ -3,6 +3,7 @@ import java.awt.datatransfer.*
 import java.awt.event.*
 import java.lang.Character.*
 import java.lang.Character.UnicodeScript.*
+import java.nio.charset.StandardCharsets.*
 import java.text.Normalizer.*
 import java.util.Collections.*
 import javax.swing.*
@@ -11,7 +12,6 @@ import javax.swing.JFrame.*
 import javax.swing.ScrollPaneConstants.*
 import javax.swing.filechooser.*
 import javax.swing.plaf.basic.*
-import kotlin.text.Charsets.UTF_16LE
 
 open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char,Node> =mutableMapOf()):MutableMap<Char,Node>by map{
 	operator fun invoke(f:Node.()->Unit):Node{f();return this}
@@ -137,7 +137,7 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char,Node> =mutableMapOf())
 			it.script in setOf(COMMON,LATIN,GREEK) && "CJK" !in it.block.toString() && "ANA" !in it.block.toString()
 		}-KEYBOARD).toSet()
 
-		fun Any?.toTitleString() = (toString().toLowerCase().split('_')as MutableList<String>).apply{forEachIndexed{i,s->this[i]=s.capitalize()}}.joinToString(" ")
+		fun Any?.toTitleString() = toString().toLowerCase().split('_').map{s->if(s.length>2)s.capitalize()else s}.joinToString(" ")
 		val Any.hex:String get() = String.format("%04X",hashCode())
 		val Char.name get() = getName(toInt())?:""
 		val Char.block get() = UnicodeBlock.of(this)
