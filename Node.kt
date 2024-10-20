@@ -1,59 +1,21 @@
-import java.awt.*
-import java.awt.datatransfer.*
-import java.awt.event.*
 import java.lang.Character.*
 import java.lang.Character.UnicodeScript.*
-import java.nio.charset.StandardCharsets.*
 import java.text.Normalizer.*
 import java.util.Collections.*
-import javax.swing.*
-import javax.swing.JFileChooser.*
-import javax.swing.JFrame.*
-import javax.swing.ScrollPaneConstants.*
-import javax.swing.filechooser.*
-import javax.swing.plaf.basic.*
 
-open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char,Node> =mutableMapOf()):MutableMap<Char,Node>by map{
-	operator fun invoke(f:Node.()->Unit):Node{f();return this}
+open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char, Node> =mutableMapOf()):MutableMap<Char, Node>by map{
+	operator fun invoke(f: Node.()->Unit): Node {f();return this}
 	override fun hashCode() = id.toInt()
 	override fun toString():String{
 		val str = hex
 		return if(str[0].isLetter()||str[0].isDigit()&&str[1].isDigit()&&str[2].isDigit()&&str[3].isDigit())str else '"'+str+'"'
 	}
-	val leaf:Leaf?get(){
-		var node:Node? = this
+	val leaf: Leaf?get(){
+		var node: Node? = this
 		while(node!is Leaf && node!=null) node = node.values.firstOrNull()
 		return node as Leaf?
 	}
-	open fun recursivelySetIDs(ids:MutableSet<Char> =((1.toChar()..0xFFFF.toChar())-id).toMutableSet()){
-		for((char,node)in this) if(node.id == MIN_VALUE){
-			node.id = if(char in ids) char else ids.last()
-			ids -= node.id
-			node.recursivelySetIDs(ids)
-		}
-	}
-	open fun toGraphvizString(visited:MutableSet<Node> =mutableSetOf()):String{
-		var result = ""
-		for((char,node)in this){
-			result+="$this->$node[label=${if(char.isLetterOrDigit())"$char" else "\"${char.toString().replace("\\","\\\\").replace("\"","\\\"")}\""}]\n"
-			if(node !in visited){
-				visited += node
-				result += node.toGraphvizString(visited)
-			}
-		}
-		return result
-	}
-	open fun toDeadTableString(visited:MutableSet<Node> =mutableSetOf()):String{
-		var result = "DEADKEY "+hex+"\r\n"
-		for((char,node)in this)result+=char.hex+' '+node.hex+if(node!is Leaf && node!is Companion)"@\r\n" else "\r\n"
-		result += "\r\n"
-		for(node in values)if(node !in visited){
-			visited += node
-			result += node.toDeadTableString(visited)
-		}
-		return result
-	}
-	infix operator fun StringBuilder.rangeTo(char:Char):Node{//maps all permutations to char
+	infix operator fun StringBuilder.rangeTo(char:Char): Node {//maps all permutations to char
 	fun permute(i:Int){
 		if(i<=0)this as CharSequence..char
 		else for(j in 0..i){
@@ -66,7 +28,7 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char,Node> =mutableMapOf())
 		permute(length-1)
 		return this@Node
 	}
-	infix operator fun CharSequence.rangeTo(char:Char):Node{
+	infix operator fun CharSequence.rangeTo(char:Char): Node {
 		var node = this@Node
 		for(i in 0..length-2){
 			if(node is Leaf)throw IllegalStateException("$this -> $char attempted to overwrite ${substring(0,i)} -> $node")
@@ -82,7 +44,7 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char,Node> =mutableMapOf())
 		leaves.put(char,this.toString())
 		return this@Node
 	}
-	infix operator fun CharSequence.rangeTo(chars:Pair<Char,Char>):Node{
+	infix operator fun CharSequence.rangeTo(chars:Pair<Char,Char>): Node {
 		if(chars.first in leaves.keys && chars.second in leaves.keys)return this@Node
 		var nodes = setOf(this@Node)
 		for(i in 0..length-2){
@@ -105,19 +67,17 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char,Node> =mutableMapOf())
 			if(null!=removed2 && leaf2!=removed2)throw IllegalStateException("$this -> $leaf2 attempted to overwrite $this -> $removed2")
 		}
 		if(nodes !== EMPTY_SET)throw IllegalStateException("$this -> ${chars.first} attempted to overwrite $this -> ${nodes.firstOrNull()}")
-		leaves.put(chars.second,toString().toLowerCase())
 		leaves.put(chars.first,toString().toUpperCase())
+		leaves.put(chars.second,toString().toLowerCase())
 		return this@Node
 	}
 
 
 
-	class Leaf(val char:Char):Node(char,EMPTY_MAP as MutableMap<Char,Node>){
+	class Leaf(val char:Char): Node(char,EMPTY_MAP as MutableMap<Char, Node>){
 		override fun toString() = if(char.isLetterOrDigit())""+char else "\""+char+"\""
 		override fun equals(other:Any?) = if(other is Leaf) char == other.char else false
-		override fun toGraphvizString(visited:MutableSet<Node>) = ""
-		override fun toDeadTableString(visited:MutableSet<Node>) = ""
-		override fun put(key:Char,value:Node):Node?=try{
+		override fun put(key:Char,value: Node): Node?=try{
 			super.put(key,value)
 		}catch(e:UnsupportedOperationException){
 			throw IllegalStateException("$key -> $value attempted to overwrite ${leaves[char]} -> $this",e)
@@ -126,20 +86,18 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char,Node> =mutableMapOf())
 
 
 
-	companion object:Node('⎄'){
+	companion object: Node('⎄'){
 		override fun toString() = "⎄"
-		override fun toGraphvizString(visited:MutableSet<Node>) = "digraph{\n"+super.toGraphvizString(visited)+'}'
-		override fun toDeadTableString(visited:MutableSet<Node>) = "﻿DEADTABLE\r\n\r\n"+super.toDeadTableString(visited)+"ENDDEADTABLE"
 
 		val leaves = mutableMapOf<Char,String>()//maps each character to a key sequence for visual display
 		val KEYBOARD=((' '..'~')+('Α'..'Ω')+('α'..'ω')+('←'..'↙')-'΢').toSet()
 		val CHARS=((0xA0.toChar()..MAX_VALUE).filter{
 			it.script in setOf(COMMON,LATIN,GREEK) && "CJK" !in it.block.toString() && "ANA" !in it.block.toString()
-		}-KEYBOARD).toSet()
+		}- KEYBOARD).toSet()
 
 		fun Any?.toTitleString() = toString().toLowerCase().split('_').map{s->if(s.length>2)s.capitalize()else s}.joinToString(" ")
 		val Any.hex:String get() = String.format("%04X",hashCode())
-		val Char.name get() = getName(toInt())?:""
+		val Char.name get() = getName(code)?:""
 		val Char.block get() = UnicodeBlock.of(this)
 		val Char.script get() = UnicodeScript.of(this.toInt())
 		val Char.nfd get() = normalize(""+this,Form.NFD)
@@ -171,31 +129,31 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char,Node> =mutableMapOf())
 		val Char.sub get() = when(this){
 			'̈'->'"'//diaeresis
 			'̄'->'-'//macron
-		//breve
+			//breve
 			'̨'->','//ogonek
 			'́'->'\''//acute accent
 			'̂'->'^'//circumflex accent
 			'̇'->'*'//dot above
-		//caron
+			//caron
 			'̧'->','//cedilla
 			'̃'->'~'//tilde
 			'·'->'.'//middle dot
-		//'̋'->'\''//double acute
-		//'̊'->'0'//ring above
-		//horn
+			//'̋'->'\''//double acute
+			//'̊'->'0'//ring above
+			//horn
 			'̀'->'`'//grave
-		//'̏'->'`'//double grave
-		//inverted breve
-		//comma below
+			//'̏'->'`'//double grave
+			//inverted breve
+			//comma below
 
-		//'̥'->'0'//ring below
+			//'̥'->'0'//ring below
 			'̣'->'.'//dot below
 			'̱'->'_'//macron below
-		//'̭'->'^'//circumflex accent below
-		//'̰'->'~'//tilde below
-		//breve below
+			//'̭'->'^'//circumflex accent below
+			//'̰'->'~'//tilde below
+			//breve below
 			'̤'->':'//diaeresis below
-		//hook above
+			//hook above
 			'̓'->','//comma above
 			'̔'->','//reversed comma above
 
@@ -240,8 +198,6 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char,Node> =mutableMapOf())
 			.removeSuffix(" PUMP")//fuel pump
 			.removeSuffix(" NODE")//ascending descending
 			.removeSuffix(" PIECE")//shogi piece
-			.removeSuffix(" LOOP")
-			.removeSuffix(" CURLY")
 
 			.removePrefix("UNIVERSAL ")//universal recycling symbol
 			.removePrefix("JAPANESE ")//japanese bank symbol
@@ -277,8 +233,8 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char,Node> =mutableMapOf())
 
 
 
-		open @JvmStatic fun main(vararg args:String){
-			for(c in CHARS-'Ȩ'-'ȩ'){//map accented characters
+		@JvmStatic fun main(vararg args:String){
+			for(c in CHARS -'Ȩ'-'ȩ'){//map accented characters
 				val decomp = c.nfd
 				if(decomp.length < 2) continue
 				val sub = decomp.sub
@@ -293,7 +249,7 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char,Node> =mutableMapOf())
 				}
 			}
 			for(c in "㍷㎜㎝㎞") c.nfkd+'1'..c
-			for(c in CHARS-('Ⅰ'..'ⅿ')-"ﬀﬅ㍷㎜㎝㎞㏂…⩶︙︰".asIterable()){//map ligatures
+			for(c in CHARS -('Ⅰ'..'ⅿ')-"ﬀﬅ㍷㎜㎝㎞㏂…⩶︙︰".asIterable()){//map ligatures
 				val s = c.nfkd.sub
 				if(s.length > 1 && s.isKeyboardLettersAndNotEntirelyDigits()) s..c
 			}
@@ -470,14 +426,14 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char,Node> =mutableMapOf())
 			"SPARKLY"..+'✨'
 			"SAND"..+'⌛'
 
-			for(c in CHARS-'⍴'-'∷'-'⏥'-'⅌')with(c.name.removeAffixes()){if(isNotEmpty()&&' ' !in this&&'-' !in this&&c.nfkd.length<=1)this..+c}
+			for(c in CHARS -'⍴'-'∷'-'⏥'-'⅌')with(c.name.removeAffixes()){if(isNotEmpty()&&' ' !in this&&'-' !in this&&c.nfkd.length<=1)this..+c}
 
-			for(b in CHARS-'◆'){
+			for(b in CHARS -'◆'){
 				val name = b.name
 				if(!name.startsWith("BLACK "))continue
 				val bname = name.substring(6).removeAffixes()
 				if(' ' in bname)continue
-				for(w in CHARS-'◇'){
+				for(w in CHARS -'◇'){
 					val name = w.name
 					if(!name.startsWith("WHITE "))continue
 					val wname = name.substring(6).removeAffixes()
@@ -486,173 +442,6 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char,Node> =mutableMapOf())
 						break
 					}
 				}
-			}
-			recursivelySetIDs()
-			val deadtable = toDeadTableString()
-			val graphviz = toGraphvizString()
-			clear()//allow the node graph to be garbage collected
-			with(object:JFrame("US-Universal Character Map"){}){//GUI setup
-				defaultCloseOperation = EXIT_ON_CLOSE
-				ToolTipManager.sharedInstance().apply{
-					initialDelay = 0
-					dismissDelay = Int.MAX_VALUE
-				}
-				val filer = JFileChooser()
-				val txt = FileNameExtensionFilter("Text Documents","txt")
-				val kld = FileNameExtensionFilter("KLD Files","kld")
-				var visibleButtonCount = 0
-				var buttonSize = 0
-				contentPane.add(JScrollPane(JPanel().apply{
-					layout = FlowLayout().apply{
-						alignment = FlowLayout.LEFT
-						hgap = 0
-						vgap = 0
-					}
-					val resized = object:ComponentAdapter(){
-						override fun componentResized(e:ComponentEvent?){
-							val width = this@with.size.width-buttonSize
-							val buttonsPerColumn = width/buttonSize
-							val rows = (visibleButtonCount-1)/buttonsPerColumn+1
-							val height = rows*buttonSize
-							this@apply.preferredSize = Dimension(width,height)
-						}
-					}
-					this@with.addComponentListener(resized)
-					val clipboard = object:MouseAdapter(){
-						override fun mouseClicked(e:MouseEvent){
-							Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(e.component.name),null)
-						}
-					}
-					val label = JLabel()
-					val search = JTextField()
-					val untypable = JCheckBox("",true)
-					val scripts = mutableMapOf<UnicodeScript,JCheckBox>()
-					val blocks = mutableMapOf<UnicodeBlock,JCheckBoxMenuItem>()
-					val categories = mutableMapOf<CharCategory,JCheckBoxMenuItem>()
-					val directions = mutableMapOf<CharDirectionality?,JCheckBoxMenuItem>()
-					for(c in(CHARS union KEYBOARD).sorted()) add(JButton(""+c).apply{
-						scripts.getOrPut(c.script){JCheckBox("",true)}
-						blocks.getOrPut(c.block){JCheckBoxMenuItem("",true)}
-						categories.getOrPut(c.category){JCheckBoxMenuItem("",true)}
-						directions.getOrPut(c.direction){JCheckBoxMenuItem("",true)}
-						name = text
-						buttonSize = preferredSize.height
-						preferredSize = Dimension(buttonSize,buttonSize)
-						margin = Insets(0,0,0,0)
-						if(!font.canDisplay(c))font=GraphicsEnvironment.getLocalGraphicsEnvironment().allFonts.find{it.canDisplay(c)}?.deriveFont(font.size2D)?:font
-						val seq = leaves[c]
-						toolTipText =
-							if(seq==null)"U+"+c.hex+' '+c.name
-							else if(c.name.contains(seq,true))"<HTML>U+"+c.hex+' '+c.name.replace(seq,"<B><U>$seq</U></B>",true)
-							else "<HTML>U+"+c.hex+" <B><U>"+seq+"</U></B> "+c.name
-						++visibleButtonCount
-						addMouseListener(clipboard)
-						if(c!in KEYBOARD && c!in leaves.keys) isEnabled = false
-					})
-					val update = object:AbstractAction(){
-						override fun actionPerformed(e:ActionEvent?){
-							visibleButtonCount = 0
-							for(component in this@apply.components){
-								val c = component.name.first()
-								val keywords = search.text.split(' ')
-								component.isVisible=if(!component.isEnabled&&!untypable.isSelected||!scripts[c.script]!!.isSelected||!blocks[c.block]!!.isSelected||!categories[c.category]!!.isSelected||!directions[c.direction]!!.isSelected||keywords.any{!c.name.containsWord(it,true,' ','-')})false
-								else{
-									++visibleButtonCount
-									true
-								}
-							}
-							label.text = ""+visibleButtonCount+" / "+(CHARS union KEYBOARD).size
-							resized.componentResized(null)
-						}
-					}
-					this@with.contentPane.add(JMenuBar().apply{
-						add(JMenu("Export").apply{
-							add(JMenuItem(object:AbstractAction("Dead Keys to Clipboard"){
-								override fun actionPerformed(e:ActionEvent?){
-									Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(deadtable),null)
-								}
-							}))
-							add(JMenuItem(object:AbstractAction("Graphviz to Clipboard"){
-								override fun actionPerformed(e:ActionEvent?){
-									Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(graphviz),null)
-								}
-							}))
-							add(JMenuItem(object:AbstractAction("Dead Keys to File..."){
-								override fun actionPerformed(e:ActionEvent?){
-									filer.fileFilter = kld
-									if(filer.showSaveDialog(this@with)==APPROVE_OPTION) filer.selectedFile.writeText(deadtable,UTF_16LE)
-								}
-							}))
-							add(JMenuItem(object:AbstractAction("Graphviz to File..."){
-								override fun actionPerformed(e:ActionEvent?){
-									filer.fileFilter = txt
-									if(filer.showSaveDialog(this@with)==APPROVE_OPTION) filer.selectedFile.writeText(graphviz)
-								}
-							}))
-						})
-						val all = object:AbstractAction("All"){
-							override fun actionPerformed(e:ActionEvent){
-								val source = e.source as AbstractButton
-								val isSourceSelected = source.isSelected
-								for(component in source.parent.components) if(component is AbstractButton) component.isSelected = isSourceSelected
-								update.actionPerformed(e)
-							}
-						}
-						fun JCheckBoxMenuItem.disableCloseOnClick(){ui=object:BasicCheckBoxMenuItemUI(){override fun doClick(m:MenuSelectionManager?){doClick(0)}}}
-						add(JMenu("Directionalities").apply{
-							add(JCheckBoxMenuItem("",true).apply{
-								action = all
-								disableCloseOnClick()
-							})
-							for((directionality,box)in directions){
-								box.action = update
-								box.text = directionality.toTitleString()
-								box.disableCloseOnClick()
-								add(box)
-							}
-						})
-						add(JMenu("Categories").apply{
-							add(JCheckBoxMenuItem("",true).apply{
-								action = all
-								disableCloseOnClick()
-							})
-							for((category,box)in categories){
-								box.action = update
-								box.text = category.toTitleString()
-								box.disableCloseOnClick()
-								add(box)
-							}
-						})
-						add(JMenu("Blocks").apply{
-							add(JCheckBoxMenuItem("",true).apply{
-								action = all
-								disableCloseOnClick()
-							})
-							for((block,box)in blocks){
-								box.action = update
-								box.text = block.toTitleString()
-								box.font = box.font.deriveFont(box.font.size*3/4f)
-								box.disableCloseOnClick()
-								add(box)
-							}
-						})
-						for((script,box)in scripts){
-							box.action = update
-							box.text = script.toString().toLowerCase().capitalize()
-							add(box)
-						}
-						label.text = ""+visibleButtonCount+" / "+(CHARS union KEYBOARD).size
-						search.action = update
-						untypable.action = update
-						untypable.text = "Untypable"
-						add(untypable)
-						add(search)
-						add(label)
-					},BorderLayout.NORTH)
-				},VERTICAL_SCROLLBAR_AS_NEEDED,HORIZONTAL_SCROLLBAR_NEVER).apply{verticalScrollBar.unitIncrement=buttonSize},BorderLayout.CENTER)
-				val screenSize = Toolkit.getDefaultToolkit().screenSize
-				size = Dimension(screenSize.width/2,screenSize.height/2)//reasonable default size, since pack() will not work in this case
-				isVisible = true
 			}
 		}
 	}
