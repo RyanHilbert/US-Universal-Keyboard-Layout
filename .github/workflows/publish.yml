@@ -17,6 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
-      - run: kotlinc *.kt -jvm-target 21 -d .jar && kotlin -classpath .jar MainKt > _site/index.html
+      - run: kotlinc *.kt -Xjdk-release=21 -d .jar && kotlin -classpath .jar MainKt > _site/index.html
       - uses: actions/upload-pages-artifact@main
       - uses: actions/deploy-pages@main
