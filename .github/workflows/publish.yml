@@ -1,7 +1,7 @@
 on: # Workflow to publish site by building project and deploying to GitHub Pages
   workflow_dispatch: # Allows you to run this workflow manually from the Actions tab
   push:
-    branches: master
+    branches: main
 
 permissions: # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
   contents: read
