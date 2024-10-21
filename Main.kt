@@ -121,9 +121,9 @@ ${UnicodeScriptFamily.values().flatMap{it}.map{it.code}.joinToString(",\n"){"bod
 ${      CharDirectionality.entries.map{it.code}.toSet().joinToString(",\n"){"body:has(#$DIRCTN_ID:checked):has(#$it:checked)>form>button[$DIRCTN_ID=$it]"}}{display:revert}
 </style>
 <nav><form>
+	<button title=About formaction=https://github.com/RyanHilbert/US-Universal-Keyboard-Layout#readme>📖</button>
 	<button title='Windows Download' formaction=https://github.com/RyanHilbert/US-Universal-Keyboard-Layout/releases/download/0.2/KbdEditInstallerUSX.exe>🪟</button>
 	<button title='Mac Download (coming soon)'>🍎</button>
-	<button title=About formaction=https://github.com/RyanHilbert/US-Universal-Keyboard-Layout#readme>📖</button>
 </form></nav>
 <search>
 	<label><input type=checkbox id=$SEQ_ID> Composable</label><br>
