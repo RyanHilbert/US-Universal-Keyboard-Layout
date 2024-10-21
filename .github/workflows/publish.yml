@@ -22,15 +22,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Build job
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@main
-      - name: Build
-        run: kotlinc *.kt -d .jar && kotlin -classpath .jar MainKt > _site/index.html
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@main
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@main
+      - uses: actions/checkout@main
+      - run: kotlinc *.kt -d .jar && kotlin -classpath .jar MainKt > _site/index.html
+      - uses: actions/upload-pages-artifact@main
+      - uses: actions/deploy-pages@main
