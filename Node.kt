@@ -15,6 +15,23 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char, Node> =mutableMapOf()
 		while(node!is Leaf && node!=null) node = node.values.firstOrNull()
 		return node as Leaf?
 	}
+	open fun recursivelySetIDs(ids:MutableSet<Char> =((1.toChar()..0xFFFF.toChar())-id).toMutableSet()){
+		for((char,node)in this) if(node.id == MIN_VALUE){
+			node.id = if(char in ids) char else ids.last()
+			ids -= node.id
+			node.recursivelySetIDs(ids)
+		}
+	}
+	open fun toDeadTableString(visited:MutableSet<Node> =mutableSetOf()):String{
+		var result = "DEADKEY "+hex+"\n"
+		for((char,node)in this)result+=char.hex+' '+node.hex+if(node!is Leaf && node!is Companion)"@\n" else "\n"
+		result += "\r\n"
+		for(node in values)if(node !in visited){
+			visited += node
+			result += node.toDeadTableString(visited)
+		}
+		return result
+	}
 	infix operator fun StringBuilder.rangeTo(char:Char): Node {//maps all permutations to char
 	fun permute(i:Int){
 		if(i<=0)this as CharSequence..char
@@ -77,6 +94,7 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char, Node> =mutableMapOf()
 	class Leaf(val char:Char): Node(char,EMPTY_MAP as MutableMap<Char, Node>){
 		override fun toString() = if(char.isLetterOrDigit())""+char else "\""+char+"\""
 		override fun equals(other:Any?) = if(other is Leaf) char == other.char else false
+		override fun toDeadTableString(visited:MutableSet<Node>) = ""
 		override fun put(key:Char,value: Node): Node?=try{
 			super.put(key,value)
 		}catch(e:UnsupportedOperationException){
@@ -88,6 +106,7 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char, Node> =mutableMapOf()
 
 	companion object: Node('⎄'){
 		override fun toString() = "⎄"
+		override fun toDeadTableString(visited:MutableSet<Node>) = "DEADTABLE\n"+super.toDeadTableString(visited)+"ENDDEADTABLE\n"
 
 		val leaves = mutableMapOf<Char,String>()//maps each character to a key sequence for visual display
 		val KEYBOARD=((' '..'~')+('Α'..'Ω')+('α'..'ω')+('←'..'↙')-'΢').toSet()
@@ -443,6 +462,7 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char, Node> =mutableMapOf()
 					}
 				}
 			}
+			recursivelySetIDs()
 		}
 	}
 }
