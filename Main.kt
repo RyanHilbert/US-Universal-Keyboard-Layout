@@ -162,5 +162,6 @@ fun main() {
 		val id = char.id
 		html.append("<button $SCRIPT_ID=$s $DIRCTN_ID=$d $CATGRY_ID=$c$q title='U+$id $n' formaction=#$id id=$id>&#x$id</button\n>")
 	}
-	println(html.append("</form>"))
+	print(html.append("</form>"))
+	System.err.print(Node.toDeadTableString())
 }
