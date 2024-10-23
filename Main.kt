@@ -82,7 +82,7 @@ val html = StringBuilder("""<!DOCTYPE html>
 	overflow-y:auto;
 	line-height:0;
 	font-size:0;
-	>button{
+	>span>button{
 		contain:strict;
 		font-size:xx-large;
 		width:2em;
@@ -110,13 +110,13 @@ val html = StringBuilder("""<!DOCTYPE html>
 		}
 	}
 }}}
-body:has(#$SEQ_ID:checked)>form>button:not([$SEQ_ID]),
-${      CharDirectionality.entries.map{it.code}.toSet().joinToString(",\n"){"body:has(#$DIRCTN_ID:not(:checked)):has(#$it:not(:checked))>form>button[$DIRCTN_ID=$it]"}},
-${UnicodeScriptFamily.values().flatMap{it}.map{it.code}.joinToString(",\n"){"body:has(#$SCRIPT_ID:not(:checked)):has(#$it:not(:checked))>form>button[$SCRIPT_ID=$it]"}},
-${                    CharCategory.entries.map{it.code}.joinToString(",\n"){"body:has(#$CATGRY_ID:not(:checked)):has(#$it:not(:checked))>form>button[$CATGRY_ID=$it]"}}{display:none}
-${                    CharCategory.entries.map{it.code}.joinToString(",\n"){"body:has(#$CATGRY_ID:checked):has(#$it:checked)>form>button[$CATGRY_ID=$it]"}},
-${UnicodeScriptFamily.values().flatMap{it}.map{it.code}.joinToString(",\n"){"body:has(#$SCRIPT_ID:checked):has(#$it:checked)>form>button[$SCRIPT_ID=$it]"}},
-${      CharDirectionality.entries.map{it.code}.toSet().joinToString(",\n"){"body:has(#$DIRCTN_ID:checked):has(#$it:checked)>form>button[$DIRCTN_ID=$it]"}}{display:revert}
+body:has(#$SEQ_ID:checked)>form>span>button:not([$SEQ_ID]),
+${      CharDirectionality.entries.map{it.code}.toSet().joinToString(",\n"){"body:has(#$DIRCTN_ID:not(:checked)):has(#$it:not(:checked))>form>span.$it"}},
+${UnicodeScriptFamily.values().flatMap{it}.map{it.code}.joinToString(",\n"){"body:has(#$SCRIPT_ID:not(:checked)):has(#$it:not(:checked))>form>span.$it"}},
+${                    CharCategory.entries.map{it.code}.joinToString(",\n"){"body:has(#$CATGRY_ID:not(:checked)):has(#$it:not(:checked))>form>span.$it"}}{display:none}
+${                    CharCategory.entries.map{it.code}.joinToString(",\n"){"body:has(#$CATGRY_ID:checked):has(#$it:checked)>form>span.$it"}},
+${UnicodeScriptFamily.values().flatMap{it}.map{it.code}.joinToString(",\n"){"body:has(#$SCRIPT_ID:checked):has(#$it:checked)>form>span.$it"}},
+${      CharDirectionality.entries.map{it.code}.toSet().joinToString(",\n"){"body:has(#$DIRCTN_ID:checked):has(#$it:checked)>form>span.$it"}}{display:revert}
 </style>
 <nav><form>
 	<button title=About formaction=https://github.com/RyanHilbert/US-Universal-Keyboard-Layout#readme>📖</button>
@@ -150,18 +150,30 @@ ${      CharDirectionality.entries.map{it.code}.toSet().joinToString(",\n"){"bod
 		</select>
 	</label>
 </search>
-<form>""")
+<form>
+<span>
+""")
 fun main() {
+	var category = Char.MIN_VALUE.category.code
+	var direction = Char.MIN_VALUE.direction.code
+	var script = Char.MIN_VALUE.script.code
+	var block = Char.MIN_VALUE.block
 	for (char in Char.MIN_VALUE..Char.MAX_VALUE) if (char.script !in DISABLED) {
 		val seq = char.seq
 		val q = if(seq.isEmpty())"" else " "+SEQ_ID+"="+seq.escapedHTML
+		val b = char.block
 		val c = char.category.code
 		val d = char.direction.code
 		val s = char.script.code
 		val n = char.name
 		val id = char.id
+		if(c!=category || d!=direction || s!=script || b!=block) html.append("</span><span class='$s $d $c'\n>")
 		html.append("<button $SCRIPT_ID=$s $DIRCTN_ID=$d $CATGRY_ID=$c$q title='U+$id $n' formaction=#$id id=$id>&#x$id</button\n>")
+		block = b
+		category = c
+		direction = d
+		script = s
 	}
-	print(html.append("</form>"))
+	print(html.append("</span></form>"))
 	System.err.print(Node.toDeadTableString())
 }
