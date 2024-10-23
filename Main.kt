@@ -121,7 +121,7 @@ ${      CharDirectionality.entries.map{it.code}.toSet().joinToString(",\n"){"bod
 <nav><form>
 	<button title=About formaction=https://github.com/RyanHilbert/US-Universal-Keyboard-Layout#readme>📖</button>
 	<button title='Windows Download' formaction=https://github.com/RyanHilbert/US-Universal-Keyboard-Layout/releases/download/0.2/KbdEditInstallerUSX.exe>🪟</button>
-	<button title='KLD Download' formaction=kbdedit.kld'>⌨️</button>
+	<button title='KLD Download' formaction=kbdedit.kld>⌨️</button>
 </form></nav>
 <search>
 	<label><input type=checkbox id=$SEQ_ID> Composable</label><br>
