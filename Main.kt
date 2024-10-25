@@ -151,7 +151,7 @@ ${      CharDirectionality.entries.map{it.code}.toSet().joinToString(",\n"){"bod
 	</label>
 </search>
 <form>
-<span>
+<span class='${Char.MIN_VALUE.script.code} ${Char.MIN_VALUE.direction.code} ${Char.MIN_VALUE.category.code}'>
 """)
 fun main() {
 	var category = Char.MIN_VALUE.category.code
