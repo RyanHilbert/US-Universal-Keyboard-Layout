@@ -87,9 +87,10 @@ val html = StringBuilder("""<!DOCTYPE html>
 		font-size:xx-large;
 		width:2em;
 		height:2em;
-		&:hover,&:target,&:focus{
+		&:hover,&:active,&:target,&:focus{
 			position:relative;
-			z-index:2
+			z-index:2;
+   			display:revert!important
 		}
 		&:before,&:after{
 			content:attr($SEQ_ID);
