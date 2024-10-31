@@ -134,7 +134,7 @@ fun main(){
 	var direction = Char.MIN_VALUE.direction.code
 	var script = Char.MIN_VALUE.script.code
 	var block = Char.MIN_VALUE.block
-	for(char in Char.MIN_VALUE..Char.MAX_VALUE)if(char.script!=UnicodeScript.UNKNOWN||char.block==null||char.block in CONDENSED){
+	for(char in Char.MIN_VALUE..Char.MAX_VALUE)if(char.script!=UnicodeScript.UNKNOWN||char.block==null||char.block in CONDENSED||char.block.chars.count()<=Char.SIZE_BITS){
 		val seq = char.seq
 		val q = if(seq.isEmpty())"" else " "+SEQ_ID+"="+seq.escapedHTML
 		val b = char.block
