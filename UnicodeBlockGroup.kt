@@ -23,7 +23,7 @@ val Enum<*>?.strength: String get() = when(this){
 	PARAGRAPH_SEPARATOR,SEGMENT_SEPARATOR,WHITESPACE,OTHER_NEUTRALS -> "Neutral"
 	else -> "Other"
 }
-val Enum<*>?.title: String get()=if(this==null)UNKNOWN.title else name.split('_').joinToString(" "){it.lowercase().capitalize()}.replaceFirst(" To ","-to-")
+val Enum<*>?.title: String get()=if(this==null)UNKNOWN.title else name.split('_').joinToString(" "){it.lowercase().capitalize()}.replace(" To ","-to-").replace("Cjk","CJK")
 val CharCategory.label: String get() = "'${title.replaceFirst(Regex("""\s+\w*$"""),"").replace(' ',' ')} ${code.superscript}'"
 val CharDirectionality?.label: String get() = when(this){
 	UNDEFINED -> "'${UNKNOWN.title} ${code.superscript}'"
