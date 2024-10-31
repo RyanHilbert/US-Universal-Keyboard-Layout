@@ -8,7 +8,11 @@ import kotlin.text.CharCategory.UNASSIGNED
 val Char.block: UnicodeBlock? get() = of(this)
 val UnicodeBlock?.group: UnicodeBlockGroup get() = UnicodeBlockGroup.values().first{this in it}
 val UnicodeBlock?.chars: CharRange get() = UnicodeBlockGroup[this]!!
-
+val UnicodeBlock?.id: String get() = chars.first().id.dropLast(1)
+val UnicodeBlock?.cssID: String get() = when(val c=id.first()){
+	in '0'..'9' -> """\3$c ${id.drop(1)}"""
+	else -> id
+}
 val Char.id get()=String.format("%04X", this.code)
 val Char.name: String get() = Character.getName(code)?:""
 
