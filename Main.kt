@@ -51,7 +51,7 @@ val html = StringBuilder("""<!DOCTYPE html>
 		border-radius:50%;
 		border:solid buttonborder;
 	}
-}>search{ direction:rtl; overflow-y:auto; float:left; position:sticky; top:0; height:100vh;
+}>search{ direction:rtl; overflow-y:auto; float:left; position:sticky; top:0; height:100vh; margin-right:1px;
 	>label{ direction:initial; display:block; width:100%; text-align:center; margin-top:1ch;
 		&:first-child{ text-align:right; margin-top:revert;
 			>*{ float:right; font-size:xx-large; width:1em; height:1em }
@@ -64,7 +64,7 @@ val html = StringBuilder("""<!DOCTYPE html>
 }>form{ overflow-y:auto; line-height:0; font-size:0;
 	>section{ contain:strict; display:inline;
 		>span{ contain:strict;
-			>button{ contain:strict; font-size:xx-large; width:2em; height:2em;
+			>button{ contain:strict; font-size:xx-large; width:2em; height:2em; margin:1px;
 				&:target,&:active,&:hover,&:focus{ z-index:2; position:relative }
 				&:before,&:after{
 					contain:strict;
@@ -122,7 +122,7 @@ body:has(#$SEQ_ID:checked)>form>section>span>button:not([$SEQ_ID]){display:none}
 	<label for=$BLOCK_ID$JS>Block</label>
 	<select id=$BLOCK_ID multiple size=${UnicodeBlockGroup.values().sumOf{it.size+1}}>${UnicodeBlockGroup.values().joinToString(""){g->"""
 		<optgroup label=${g.label}>"""+g.joinToString(""){"""
-			<option ${if(it.chars.any{it.seq.isNotEmpty()})"selected " else ""}id=_${it.id} label=${it.label}>"""}}}
+			<option ${if(it.chars.count()<=Char.SIZE_BITS||it.chars.any{it.seq.isNotEmpty()})"selected " else ""}id=_${it.id} label=${it.label}>"""}}}
 	</select>
 </search>
 <form>
@@ -134,7 +134,7 @@ fun main(){
 	var direction = Char.MIN_VALUE.direction.code
 	var script = Char.MIN_VALUE.script.code
 	var block = Char.MIN_VALUE.block
-	for(char in Char.MIN_VALUE..Char.MAX_VALUE)if(char.script!=UnicodeScript.UNKNOWN||char.block==null||char.block in CONDENSED||char.block.chars.count()<=Char.SIZE_BITS){
+	for(char in Char.MIN_VALUE..Char.MAX_VALUE)if(char.script!=UnicodeScript.UNKNOWN||char.block==null||char.block in CONDENSED){
 		val seq = char.seq
 		val q = if(seq.isEmpty())"" else " "+SEQ_ID+"="+seq.escapedHTML
 		val b = char.block
