@@ -61,7 +61,7 @@ val html = StringBuilder("""<!DOCTYPE html>
 	}
 	>select{ direction:initial; display:block; width:100%; overflow-y:auto; text-align-last:justify;
 		option{ padding-right: .5ch }
-		&:last-child option{ text-align-last:initial; font-size:xx-small }
+		&:last-child{ text-align-last:initial; font-size:xx-small }
 	}
 }>form{ overflow-y:auto; line-height:0; font-size:0;
 	>section{ contain:strict; display:inline;
