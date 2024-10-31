@@ -17,8 +17,9 @@ val DIRCTN_ID=CharDirectionality::class.simpleName!!.uppercase().last{it!in Char
 //These blocks should be condensed into a singular character for display since they are either extremely large (performance) or homogenous (redundant)
 val CONDENSED=setOf(CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A,CJK_UNIFIED_IDEOGRAPHS,HIGH_SURROGATES,HIGH_PRIVATE_USE_SURROGATES,LOW_SURROGATES,PRIVATE_USE_AREA)
 
-//selects all options when associated label is clicked
-val JS=" onclick='for(var g of document.getElementById(this.htmlFor).children)for(var o of g.children)o.selected=true'"
+//selects all options when associated label is interacted with
+val FN="for(var g of document.getElementById(this.htmlFor).children)for(var o of g.children)o.selected=true"
+val JS=" onclick='$FN' onkeypress='$FN'"
 
 val html = StringBuilder("""<!DOCTYPE html>
 <meta charset=UTF-8>
@@ -52,8 +53,9 @@ val html = StringBuilder("""<!DOCTYPE html>
 		border:solid buttonborder;
 	}
 }>search{ direction:rtl; overflow-y:auto; float:left; position:sticky; top:0; height:100vh; margin-right:1px;
-	>label{ direction:initial; display:block; width:100%; text-align:center; margin-top:1ch;
-		&:first-child{ text-align:right; margin-top:revert;
+	>label{ direction:initial; display:block; width:100%; text-align:center; padding-top:1ch;
+		&:is(:target,:active,:hover,:focus)+select>optgroup>option:not(:checked){ background-color:Highlight }
+		&:first-child{ text-align:right; padding-top:revert;
 			>*{ float:right; font-size:xx-large; width:1em; height:1em }
 		}
 	}
@@ -104,22 +106,22 @@ body:has(#$SEQ_ID:checked)>form>section>span>button:not([$SEQ_ID]){display:none}
 </form></nav>
 <search>
 	<label>Composable<input type=checkbox id=$SEQ_ID></label>
-	<label for=$CATGRY_ID$JS>Category</label>
+	<label for=$CATGRY_ID tabindex=0$JS>Category</label>
 	<select id=$CATGRY_ID multiple size=${CharCategory.entries.size+CharCategory.entries.map{it.code.first()}.toSet().size}>${CharCategory.entries.map{when(val c=it.code.first()){'C'->'L' else->c}}.toSet().plus('C').joinToString(""){ g->"""
 		<optgroup label=${CharCategory.entries.first{it.code.startsWith(g)}.name.substringAfterLast('_',"Other").lowercase().capitalize()}>"""+CharCategory.entries.drop(1).plus(UNASSIGNED).filter{it.code.startsWith(g)}.joinToString(""){"""
 			<option selected id=${it.code} label=${it.label}>"""}}}
 	</select>
-	<label for=$SCRIPT_ID$JS>Script</label>
+	<label for=$SCRIPT_ID tabindex=0$JS>Script</label>
 	<select id=$SCRIPT_ID multiple size=${UnicodeScriptFamily.values().sumOf{it.size+1}}>${UnicodeScriptFamily.values().joinToString(""){g->"""
 		<optgroup label=${g.label}>"""+g.joinToString(""){"""
 			<option selected id=${it.code} label=${it.label}>"""}}}
 	</select>
-	<label for=$DIRCTN_ID$JS>Direction</label>
+	<label for=$DIRCTN_ID tabindex=0$JS>Direction</label>
 	<select id=$DIRCTN_ID multiple size=${CharDirectionality.entries.map{it.code}.toSet().size+CharDirectionality.entries.map{it.strength}.toSet().size}>${CharDirectionality.entries.drop(1).map{it.strength}.toSet().joinToString(""){g->"""
 		<optgroup label=$g>"""+CharDirectionality.entries.drop(1).plus(UNDEFINED).filter{it.strength==g&&it<=LEFT_TO_RIGHT_EMBEDDING}.joinToString(""){"""
 			<option selected id=${it.code} label=${it.label}>"""}}}
 	</select>
-	<label for=$BLOCK_ID$JS>Block</label>
+	<label for=$BLOCK_ID tabindex=0$JS>Block</label>
 	<select id=$BLOCK_ID multiple size=${UnicodeBlockGroup.values().sumOf{it.size+1}}>${UnicodeBlockGroup.values().joinToString(""){g->"""
 		<optgroup label=${g.label}>"""+g.joinToString(""){"""
 			<option ${if(it.chars.count()<=Char.SIZE_BITS||it.chars.any{it.seq.isNotEmpty()})"selected " else ""}id=_${it.id} label=${it.label}>"""}}}
