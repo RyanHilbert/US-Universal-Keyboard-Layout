@@ -1,6 +1,7 @@
 import java.lang.Character.UnicodeScript
 import java.lang.Character.UnicodeBlock
 import java.lang.Character.UnicodeBlock.*
+import javax.naming.directory.SearchResult
 import kotlin.text.CharDirectionality.*
 import kotlin.text.CharCategory.*
 
@@ -8,11 +9,13 @@ val ignored = Node.main()
 val Char.seq get() = Node.leaves.getOrDefault(this, "")
 val String.escapedHTML get()=replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace("\"","&quot;").replace("'","&apos;")
 
-val SEQ_ID=         CharSequence::class.simpleName!!.uppercase().last{it!in CharDirectionality.entries.map{it.code}}
-val BLOCK_ID=       UnicodeBlock::class.simpleName!!.uppercase().last{it!in CharDirectionality.entries.map{it.code}+SEQ_ID}
-val SCRIPT_ID=     UnicodeScript::class.simpleName!!.uppercase().last{it!in CharDirectionality.entries.map{it.code}+SEQ_ID+BLOCK_ID}
-val CATGRY_ID=      CharCategory::class.simpleName!!.uppercase().last{it!in CharDirectionality.entries.map{it.code}+SEQ_ID+BLOCK_ID+SCRIPT_ID}
-val DIRCTN_ID=CharDirectionality::class.simpleName!!.uppercase().last{it!in CharDirectionality.entries.map{it.code}+SEQ_ID+BLOCK_ID+SCRIPT_ID+CATGRY_ID}
+//Ensure every single-character ID within the document is unique
+val    SEQ_ID= CharSequence::class.simpleName!!.uppercase().last{it!in CharDirectionality.entries.map{it.code}}
+val  BLOCK_ID= UnicodeBlock::class.simpleName!!.uppercase().last{it!in CharDirectionality.entries.map{it.code}+SEQ_ID}
+val SEARCH_ID= SearchResult::class.simpleName!!.uppercase().last{it!in CharDirectionality.entries.map{it.code}+SEQ_ID+BLOCK_ID}
+val CATGRY_ID= CharCategory::class.simpleName!!.uppercase().last{it!in CharDirectionality.entries.map{it.code}+SEQ_ID+BLOCK_ID+SEARCH_ID}
+val SCRIPT_ID=UnicodeScript::class.simpleName!!.uppercase().last{it!in CharDirectionality.entries.map{it.code}+SEQ_ID+BLOCK_ID+SEARCH_ID+CATGRY_ID}
+val DIRCTN_ID=CharDirectionality::class.simpleName!!.uppercase().last{it!in CharDirectionality.entries.map{it.code}  +BLOCK_ID+SEARCH_ID+CATGRY_ID+SCRIPT_ID+SEQ_ID}
 
 //These blocks should be condensed into a singular character for display since they are either extremely large (performance) or homogenous (redundant)
 val CONDENSED=setOf(CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A,CJK_UNIFIED_IDEOGRAPHS,HIGH_SURROGATES,HIGH_PRIVATE_USE_SURROGATES,LOW_SURROGATES,PRIVATE_USE_AREA)
@@ -95,16 +98,16 @@ val html = StringBuilder("""<!DOCTYPE html>
 		}
 	}
 }}}${(CharDirectionality.entries.map{it.code}.toSet()+CharCategory.entries.map{it.code}+UnicodeScriptFamily.values().flatMap{it}.map{it.code}).joinToString(""){"""
-body:has(#$it:not(:checked)) .$it,"""}}${UnicodeBlockGroup.values().flatMap{it}.joinToString(""){"""
-body:has(#_${it.id}:not(:checked)) #${it.cssID},"""}}
-body:has(#$SEQ_ID:checked)>form>section>span>button:not([$SEQ_ID]){display:none}
+search#$SEARCH_ID:has(#$it:not(:checked))+form>section>span.$it,"""}}${UnicodeBlockGroup.values().flatMap{it}.joinToString(""){"""
+search#$SEARCH_ID:has(#_${it.id}:not(:checked))+form>section#${it.cssID},"""}}
+search#$SEARCH_ID:has(#$SEQ_ID:checked)+form>section>span>button:not([$SEQ_ID]){display:none}
 </style>
 <nav><form>
 	<button title=About formaction=https://github.com/RyanHilbert/US-Universal-Keyboard-Layout#readme>📖</button>
 	<button title='Windows Download' formaction=https://github.com/RyanHilbert/US-Universal-Keyboard-Layout/releases/download/0.2/KbdEditInstallerUSX.exe>🪟</button>
 	<button title='KLD Download' formaction=/kbdedit.kld>⌨️</button>
 </form></nav>
-<search>
+<search id=$SEARCH_ID>
 	<label>Composable<input type=checkbox id=$SEQ_ID></label>
 	<label for=$CATGRY_ID tabindex=0$JS>Category</label>
 	<select id=$CATGRY_ID multiple size=${CharCategory.entries.size+CharCategory.entries.map{it.code.first()}.toSet().size}>${CharCategory.entries.map{when(val c=it.code.first()){'C'->'L' else->c}}.toSet().plus('C').joinToString(""){ g->"""
