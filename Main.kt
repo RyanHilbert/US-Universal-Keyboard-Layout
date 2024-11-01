@@ -108,7 +108,7 @@ search#$SEARCH_ID:has(#$SEQ_ID:checked)+form>section>span>button:not([$SEQ_ID]){
 	<button title='KLD Download' formaction=/kbdedit.kld>⌨️</button>
 </form></nav>
 <search id=$SEARCH_ID>
-	<label>Composable<input type=checkbox id=$SEQ_ID></label>
+	<label>Composable<input type=checkbox checked id=$SEQ_ID></label>
 	<label for=$CATGRY_ID tabindex=0$JS>Category</label>
 	<select id=$CATGRY_ID multiple size=${CharCategory.entries.size+CharCategory.entries.map{it.code.first()}.toSet().size}>${CharCategory.entries.map{when(val c=it.code.first()){'C'->'L' else->c}}.toSet().plus('C').joinToString(""){ g->"""
 		<optgroup label=${CharCategory.entries.first{it.code.startsWith(g)}.name.substringAfterLast('_',"Other").lowercase().capitalize()}>"""+CharCategory.entries.drop(1).plus(UNASSIGNED).filter{it.code.startsWith(g)}.joinToString(""){"""
@@ -127,7 +127,7 @@ search#$SEARCH_ID:has(#$SEQ_ID:checked)+form>section>span>button:not([$SEQ_ID]){
 	<label for=$BLOCK_ID tabindex=0$JS>Block</label>
 	<select id=$BLOCK_ID multiple size=${UnicodeBlockGroup.values().sumOf{it.size+1}}>${UnicodeBlockGroup.values().joinToString(""){g->"""
 		<optgroup label=${g.label}>"""+g.joinToString(""){"""
-			<option ${if(it.chars.count()<=Char.SIZE_BITS||it.chars.any{it.seq.isNotEmpty()})"selected " else ""}id=_${it.id} label=${it.label}>"""}}}
+			<option selected id=_${it.id} label=${it.label}>"""}}}
 	</select>
 </search>
 <form>
