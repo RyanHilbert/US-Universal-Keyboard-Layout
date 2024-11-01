@@ -18,7 +18,7 @@ val SCRIPT_ID=UnicodeScript::class.simpleName!!.uppercase().last{it!in CharDirec
 val DIRCTN_ID=CharDirectionality::class.simpleName!!.uppercase().last{it!in CharDirectionality.entries.map{it.code}  +BLOCK_ID+SEARCH_ID+CATGRY_ID+SCRIPT_ID+SEQ_ID}
 
 //These blocks should be condensed into a singular character for display since they are either extremely large (performance) or homogenous (redundant)
-val CONDENSED=setOf(CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A,CJK_UNIFIED_IDEOGRAPHS,HIGH_SURROGATES,HIGH_PRIVATE_USE_SURROGATES,LOW_SURROGATES,PRIVATE_USE_AREA)
+val CONDENSED=setOf(CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A,CJK_UNIFIED_IDEOGRAPHS,HANGUL_SYLLABLES,HIGH_SURROGATES,HIGH_PRIVATE_USE_SURROGATES,LOW_SURROGATES,PRIVATE_USE_AREA)
 
 //selects all options when associated label is interacted with
 val FN="for(var g of document.getElementById(this.htmlFor).children)for(var o of g.children)o.selected=true"
