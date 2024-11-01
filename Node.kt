@@ -272,7 +272,6 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char, Node> =mutableMapOf()
 				val s = c.nfkd.sub
 				if(s.length > 1 && s.isKeyboardLettersAndNotEntirelyDigits()) s..c
 			}
-			"NUL"..Char.MIN_VALUE
 			"OE"..'Œ'
 			"oe"..'œ'
 			"AE"..'Æ'
