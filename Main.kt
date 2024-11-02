@@ -27,7 +27,7 @@ val JS=" onclick='$FN' onkeypress='$FN'"
 val html = StringBuilder("""<!DOCTYPE html>
 <meta charset=UTF-8>
 <title>How do I type...?</title>
-<link rel=icon href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -4 5 5" font-size="4"><text>⌨️</text></svg>'>
+<link rel=icon href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 9 9" font-size="8"><text>⌨️</text><text style="white-space:pre"> ❓</text></svg>'>
 <style>:root{color-scheme:dark light;>body{margin:0;
 >nav>form>button{
 	z-index:1;
@@ -56,12 +56,11 @@ val html = StringBuilder("""<!DOCTYPE html>
 		border:solid buttonborder;
 	}
 }>search{ direction:rtl; overflow-y:auto; float:left; position:sticky; top:0; height:100vh; margin-right:1px;
-	>label{ direction:initial; display:block; width:100%; text-align:center; padding-top:1ch;
-		&:is(:target,:active,:hover,:focus)+select>optgroup>option:not(:checked){ background-color:Highlight }
-		&:first-child{ text-align:right; padding-top:revert;
-			>*{ float:right; font-size:xx-large; width:1em; height:1em }
-		}
+	>label{ direction:initial; display:block; width:100%; text-align:center; padding-top:1ch; white-space:pre;
+		&:first-of-type{ text-align:left; padding-top:revert}
+		&:is(:target,:active,:hover,:focus)+select>optgroup>option:not(:checked){ background-color:highlight }
 	}
+	>input{ direction:initial; position:sticky; top:1mm; right:1em; float:right; font-size:xx-large; width:1em; height:1em; outline:thin solid}
 	>select{ direction:initial; display:block; width:100%; overflow-y:auto; text-align-last:justify;
 		option{ padding-right: .5ch }
 		&:last-child{ text-align-last:initial; font-size:xx-small }
@@ -108,23 +107,23 @@ search#$SEARCH_ID:has(#$SEQ_ID:checked)+form>section>span>button:not([$SEQ_ID]){
 	<button title='KLD Download' formaction=/kbdedit.kld>⌨️</button>
 </form></nav>
 <search id=$SEARCH_ID>
-	<label>Composable<input type=checkbox checked id=$SEQ_ID></label>
-	<label for=$CATGRY_ID tabindex=0$JS>Category</label>
+	<input type=checkbox checked id=$SEQ_ID title=Composable?><label for=$SEQ_ID> Composable?</label>
+	<label for=$CATGRY_ID tabindex=0$JS>Category	</label>
 	<select id=$CATGRY_ID multiple size=${CharCategory.entries.size+CharCategory.entries.map{it.code.first()}.toSet().size}>${CharCategory.entries.map{when(val c=it.code.first()){'C'->'L' else->c}}.toSet().plus('C').joinToString(""){ g->"""
 		<optgroup label=${CharCategory.entries.first{it.code.startsWith(g)}.name.substringAfterLast('_',"Other").lowercase().capitalize()}>"""+CharCategory.entries.drop(1).plus(UNASSIGNED).filter{it.code.startsWith(g)}.joinToString(""){"""
 			<option selected id=${it.code} label=${it.label}>"""}}}
 	</select>
-	<label for=$SCRIPT_ID tabindex=0$JS>Script</label>
+	<label for=$SCRIPT_ID tabindex=0$JS>Script	</label>
 	<select id=$SCRIPT_ID multiple size=${UnicodeScriptFamily.values().sumOf{it.size+1}}>${UnicodeScriptFamily.values().joinToString(""){g->"""
 		<optgroup label=${g.label}>"""+g.joinToString(""){"""
 			<option selected id=${it.code} label=${it.label}>"""}}}
 	</select>
-	<label for=$DIRCTN_ID tabindex=0$JS>Direction</label>
+	<label for=$DIRCTN_ID tabindex=0$JS>Direction	</label>
 	<select id=$DIRCTN_ID multiple size=${CharDirectionality.entries.map{it.code}.toSet().size+CharDirectionality.entries.map{it.strength}.toSet().size}>${CharDirectionality.entries.drop(1).map{it.strength}.toSet().joinToString(""){g->"""
 		<optgroup label=$g>"""+CharDirectionality.entries.drop(1).plus(UNDEFINED).filter{it.strength==g&&it<=LEFT_TO_RIGHT_EMBEDDING}.joinToString(""){"""
 			<option selected id=${it.code} label=${it.label}>"""}}}
 	</select>
-	<label for=$BLOCK_ID tabindex=0$JS>Block</label>
+	<label for=$BLOCK_ID tabindex=0$JS>Block	</label>
 	<select id=$BLOCK_ID multiple size=${UnicodeBlockGroup.values().sumOf{it.size+1}}>${UnicodeBlockGroup.values().joinToString(""){g->"""
 		<optgroup label=${g.label}>"""+g.joinToString(""){"""
 			<option selected id=_${it.id} label=${it.label}>"""}}}
