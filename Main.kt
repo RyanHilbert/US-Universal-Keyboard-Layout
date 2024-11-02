@@ -60,7 +60,7 @@ val html = StringBuilder("""<!DOCTYPE html>
 		&:first-of-type{ text-align:revert; font-size:revert; font-weight:revert; padding-top:revert}
 		&:is(:target,:active,:hover,:focus)+select>optgroup>option:not(:checked){ background-color:highlight }
 	}
-	>input{ direction:initial; position:sticky; top:1mm; right:1em; float:right; font-size:xx-large; width:1em; height:1em; outline:thin solid}
+	>input{ direction:initial; position:sticky; top:1mm; right:1em; float:right; font-size:xx-large; width:1em; height:1em; box-shadow:0 0 1mm}
 	>select{ direction:initial; display:block; width:100%; overflow-y:auto; text-align-last:justify;
 		option{ padding-right:1mm }
 		&:last-child{ text-align-last:initial; font-size:xx-small }
