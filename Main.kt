@@ -22,7 +22,7 @@ val CONDENSED=setOf(CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A,CJK_UNIFIED_IDEOGRAPHS,HA
 
 //selects all options when associated label is interacted with
 val FN="for(var g of document.getElementById(this.htmlFor).children)for(var o of g.children)o.selected=true"
-val JS=" onclick='$FN' onkeypress='$FN'"
+val JS="onclick='$FN' onkeypress='$FN'"
 
 val html = StringBuilder("""<!DOCTYPE html>
 <meta charset=UTF-8>
@@ -56,13 +56,13 @@ val html = StringBuilder("""<!DOCTYPE html>
 		border:solid buttonborder;
 	}
 }>search{ direction:rtl; overflow-y:auto; float:left; position:sticky; top:0; height:100vh; margin-right:1px;
-	>label{ direction:initial; display:block; width:100%; text-align:center; padding-top:1ch; white-space:pre;
-		&:first-of-type{ text-align:left; padding-top:revert}
+	>label{ direction:initial; text-align:center; font-size:large; font-weight:bold; display:block; width:100%; padding-top:1mm; white-space:pre;
+		&:first-of-type{ text-align:revert; font-size:revert; font-weight:revert; padding-top:revert}
 		&:is(:target,:active,:hover,:focus)+select>optgroup>option:not(:checked){ background-color:highlight }
 	}
 	>input{ direction:initial; position:sticky; top:1mm; right:1em; float:right; font-size:xx-large; width:1em; height:1em; outline:thin solid}
 	>select{ direction:initial; display:block; width:100%; overflow-y:auto; text-align-last:justify;
-		option{ padding-right: .5ch }
+		option{ padding-right:1mm }
 		&:last-child{ text-align-last:initial; font-size:xx-small }
 	}
 }>form{ overflow-y:auto; line-height:0; font-size:0;
@@ -99,7 +99,8 @@ val html = StringBuilder("""<!DOCTYPE html>
 }}}${(CharDirectionality.entries.map{it.code}.toSet()+CharCategory.entries.map{it.code}+UnicodeScriptFamily.values().flatMap{it}.map{it.code}).joinToString(""){"""
 search#$SEARCH_ID:has(#$it:not(:checked))+form>section>span.$it,"""}}${UnicodeBlockGroup.values().flatMap{it}.joinToString(""){"""
 search#$SEARCH_ID:has(#_${it.id}:not(:checked))+form>section#${it.cssID},"""}}
-search#$SEARCH_ID:has(#$SEQ_ID:checked)+form>section>span>button:not([$SEQ_ID]){display:none}
+search#$SEARCH_ID:has(#$SEQ_ID:checked)+form>section>span>button:not([$SEQ_ID]),
+search#$SEARCH_ID:has(#$SEQ_ID:indeterminate)+form>section>span>button[$SEQ_ID]{display:none}
 </style>
 <nav><form>
 	<button title=About formaction=https://github.com/RyanHilbert/US-Universal-Keyboard-Layout#readme>📖</button>
@@ -107,23 +108,23 @@ search#$SEARCH_ID:has(#$SEQ_ID:checked)+form>section>span>button:not([$SEQ_ID]){
 	<button title='KLD Download' formaction=/kbdedit.kld>⌨️</button>
 </form></nav>
 <search id=$SEARCH_ID>
-	<input type=checkbox checked id=$SEQ_ID title=Composable?><label for=$SEQ_ID> Composable?</label>
-	<label for=$CATGRY_ID tabindex=0$JS>Category	</label>
+	<input type=checkbox checked id=$SEQ_ID title=Composable? onchange=if(this.checked){if(this.multiple)this.indeterminate=!(this.multiple=this.checked=false)}else{this.multiple=true}><label for=$SEQ_ID> Composable?</label>
+	<label for=$CATGRY_ID tabindex=0 $JS>Category </label>
 	<select id=$CATGRY_ID multiple size=${CharCategory.entries.size+CharCategory.entries.map{it.code.first()}.toSet().size}>${CharCategory.entries.map{when(val c=it.code.first()){'C'->'L' else->c}}.toSet().plus('C').joinToString(""){ g->"""
 		<optgroup label=${CharCategory.entries.first{it.code.startsWith(g)}.name.substringAfterLast('_',"Other").lowercase().capitalize()}>"""+CharCategory.entries.drop(1).plus(UNASSIGNED).filter{it.code.startsWith(g)}.joinToString(""){"""
 			<option selected id=${it.code} label=${it.label}>"""}}}
 	</select>
-	<label for=$SCRIPT_ID tabindex=0$JS>Script	</label>
+	<label for=$SCRIPT_ID tabindex=0 $JS>Script	</label>
 	<select id=$SCRIPT_ID multiple size=${UnicodeScriptFamily.values().sumOf{it.size+1}}>${UnicodeScriptFamily.values().joinToString(""){g->"""
 		<optgroup label=${g.label}>"""+g.joinToString(""){"""
 			<option selected id=${it.code} label=${it.label}>"""}}}
 	</select>
-	<label for=$DIRCTN_ID tabindex=0$JS>Direction	</label>
+	<label for=$DIRCTN_ID tabindex=0 $JS>Direction	</label>
 	<select id=$DIRCTN_ID multiple size=${CharDirectionality.entries.map{it.code}.toSet().size+CharDirectionality.entries.map{it.strength}.toSet().size}>${CharDirectionality.entries.drop(1).map{it.strength}.toSet().joinToString(""){g->"""
 		<optgroup label=$g>"""+CharDirectionality.entries.drop(1).plus(UNDEFINED).filter{it.strength==g&&it<=LEFT_TO_RIGHT_EMBEDDING}.joinToString(""){"""
 			<option selected id=${it.code} label=${it.label}>"""}}}
 	</select>
-	<label for=$BLOCK_ID tabindex=0$JS>Block	</label>
+	<label for=$BLOCK_ID tabindex=0 $JS>Block	</label>
 	<select id=$BLOCK_ID multiple size=${UnicodeBlockGroup.values().sumOf{it.size+1}}>${UnicodeBlockGroup.values().joinToString(""){g->"""
 		<optgroup label=${g.label}>"""+g.joinToString(""){"""
 			<option selected id=_${it.id} label=${it.label}>"""}}}
