@@ -27,45 +27,25 @@ val JS="onclick='$FN' onkeypress='$FN'"
 val html = StringBuilder("""<!DOCTYPE html>
 <meta charset=UTF-8>
 <title>How do I type...?</title>
-<link rel=icon href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 9 9" font-size="8"><text>⌨️</text><text style="white-space:pre"> ❓</text></svg>'>
-<style>:root{color-scheme:dark light;>body{margin:0;
->nav>form>button{
-	z-index:1;
-	width:2em;
-	height:2em;
-	position:fixed;
-	right:0;
-	top:0;
-	bottom:0;
-	margin:auto;
-	font-size:xxx-large;
-	clip-path:circle();
-	&:first-child{bottom:revert}
-	&:last-child{top:revert}
-	&:after{
-		content:'';
-		width:100%;
-		height:100%;
-		position:absolute;
-		top:-50%;
-		left:-50%;
-		right:-50%;
-		bottom:-50%;
-		margin:auto;
-		border-radius:50%;
-		border:solid buttonborder;
+<link rel=icon href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 9 9" font-size="8"><text>⌨️</text><text>❓</text></svg>'>
+<style>:root{color-scheme:dark light;>body{margin:0;>form{
+>search{ direction:rtl; overflow-y:auto; float:left; position:sticky; top:0; height:100vh; margin-right:1px;
+	>nav{ direction:initial; width:100%; margin-bottom:1mm; position:sticky; top:0; background-color:canvas;
+		>button{ position:relative; font-size:xx-large; aspect-ratio:1; width:calc(100%/3); contain:strict; background-color:highlight;
+			&:after{ position:absolute; font-size:initial; right:0; bottom:0; content:'📥' }
+			&:first-child:after{ margin:auto; left:0; height:70%; content:'❓' }
+		}
 	}
-}>search{ direction:rtl; overflow-y:auto; float:left; position:sticky; top:0; height:100vh; margin-right:1px;
+	>input{ direction:initial; position:sticky; top:2em; float:right; margin-right:1em; font-size:xx-large; width:1em; height:1em; box-shadow:0 0 0 1px }
 	>label{ direction:initial; text-align:center; font-size:large; font-weight:bold; display:block; width:100%; padding-top:1mm; white-space:pre;
-		&:first-of-type{ text-align:revert; font-size:revert; font-weight:revert; padding-top:revert}
+		&:first-of-type{ text-align:right; font-size:revert; font-weight:revert; padding-top:revert }
 		&:is(:target,:active,:hover,:focus)+select>optgroup>option:not(:checked){ background-color:highlight }
 	}
-	>input{ direction:initial; position:sticky; top:1mm; right:1em; float:right; font-size:xx-large; width:1em; height:1em; box-shadow:0 0 0 1px}
 	>select{ direction:initial; display:block; width:100%; overflow-y:auto; text-align-last:justify;
 		option{ padding-right:1mm }
 		&:last-child{ text-align-last:initial; font-size:xx-small }
 	}
-}>form{ overflow-y:auto; line-height:0; font-size:0;
+}>main{ overflow-y:auto; line-height:0; font-size:0;
 	>section{ contain:strict; display:inline;
 		>span{ contain:strict;
 			>button{ contain:strict; font-size:xx-large; width:2em; height:2em; margin:1px;
@@ -96,20 +76,21 @@ val html = StringBuilder("""<!DOCTYPE html>
 			}
 		}
 	}
-}}}${(CharDirectionality.entries.map{it.code}.toSet()+CharCategory.entries.map{it.code}+UnicodeScriptFamily.values().flatMap{it}.map{it.code}).joinToString(""){"""
-search#$SEARCH_ID:has(#$it:not(:checked))+form>section>span.$it,"""}}${UnicodeBlockGroup.values().flatMap{it}.joinToString(""){"""
-search#$SEARCH_ID:has(#_${it.id}:not(:checked))+form>section#${it.cssID},"""}}
-search#$SEARCH_ID:has(#$SEQ_ID:checked)+form>section>span>button:not([$SEQ_ID]),
-search#$SEARCH_ID:has(#$SEQ_ID:indeterminate)+form>section>span>button[$SEQ_ID]{display:none}
+}}}}${(CharDirectionality.entries.map{it.code}.toSet()+CharCategory.entries.map{it.code}+UnicodeScriptFamily.values().flatMap{it}.map{it.code}).joinToString(""){"""
+search#$SEARCH_ID:has(#$it:not(:checked))+main>section>span.$it,"""}}${UnicodeBlockGroup.values().flatMap{it}.joinToString(""){"""
+search#$SEARCH_ID:has(#_${it.id}:not(:checked))+main>section#${it.cssID},"""}}
+search#$SEARCH_ID:has(#$SEQ_ID:checked)+main>section>span>button:not([$SEQ_ID]),
+search#$SEARCH_ID:has(#$SEQ_ID:indeterminate)+main>section>span>button[$SEQ_ID]{display:none}
 </style>
-<nav><form>
-	<button title=About formaction=https://github.com/RyanHilbert/US-Universal-Keyboard-Layout#readme>📖</button>
-	<button title='Windows Download' formaction=https://github.com/RyanHilbert/US-Universal-Keyboard-Layout/releases/download/0.2/KbdEditInstallerUSX.exe>🪟</button>
-	<button title='KLD Download' formaction=/kbdedit.kld>⌨️</button>
-</form></nav>
+<form>
 <search id=$SEARCH_ID>
-	<input type=checkbox checked id=$SEQ_ID title=Composable? onchange=if(this.checked){if(this.multiple)this.indeterminate=!(this.multiple=this.checked=false)}else{this.multiple=true}><label for=$SEQ_ID> Composable?</label>
-	<label for=$CATGRY_ID tabindex=0 $JS>Category </label>
+	<nav>
+		<button title=About formaction=https://github.com/RyanHilbert/US-Universal-Keyboard-Layout#readme>📖</button
+		><button title='Windows Download' formaction=https://github.com/RyanHilbert/US-Universal-Keyboard-Layout/releases/download/0.2/KbdEditInstallerUSX.exe>🪟</button
+		><button title='KbdEdit Download' formaction=/kbdedit.kld>⌨️</button>
+	</nav>
+	<input type=checkbox checked id=$SEQ_ID title=Typeable? onchange=if(this.checked){if(this.multiple)this.indeterminate=!(this.multiple=this.checked=false)}else{this.multiple=true}><label for=$SEQ_ID>Typeable?</label>
+	<label for=$CATGRY_ID tabindex=0 $JS>Category</label>
 	<select id=$CATGRY_ID multiple size=${CharCategory.entries.size+CharCategory.entries.map{it.code.first()}.toSet().size}>${CharCategory.entries.map{when(val c=it.code.first()){'C'->'L' else->c}}.toSet().plus('C').joinToString(""){ g->"""
 		<optgroup label=${CharCategory.entries.first{it.code.startsWith(g)}.name.substringAfterLast('_',"Other").lowercase().capitalize()}>"""+CharCategory.entries.drop(1).plus(UNASSIGNED).filter{it.code.startsWith(g)}.joinToString(""){"""
 			<option selected id=${it.code} label=${it.label}>"""}}}
@@ -130,7 +111,7 @@ search#$SEARCH_ID:has(#$SEQ_ID:indeterminate)+form>section>span>button[$SEQ_ID]{
 			<option selected id=_${it.id} label=${it.label}>"""}}}
 	</select>
 </search>
-<form>
+<main>
 <section id=${Char.MIN_VALUE.block.id}>
 <span class='${Char.MIN_VALUE.script.code} ${Char.MIN_VALUE.direction.code} ${Char.MIN_VALUE.category.code}'>
 """)
