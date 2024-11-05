@@ -31,12 +31,12 @@ val html = StringBuilder("""<!DOCTYPE html>
 <style>:root{color-scheme:dark light;>body{margin:0;>form{
 >search{ direction:rtl; overflow-y:auto; float:left; position:sticky; top:0; height:100vh; margin-right:1px;
 	>nav{ direction:initial; width:100%; margin-bottom:1mm; position:sticky; top:0; background-color:canvas;
-		>button{ position:relative; font-size:xx-large; aspect-ratio:1; width:calc(100%/3); contain:strict;
+		>button{ position:relative; font-size:xx-large; aspect-ratio:1; width:calc(100%/3); contain:strict; box-shadow:0 0 0 1px canvas;
 			&:after{ position:absolute; font-size:initial; right:0; bottom:0; content:'📥' }
 			&:first-child:after{ margin:auto; left:0; height:70%; content:'❓' }
 		}
 	}
-	>input{ direction:initial; position:sticky; top:2em; margin-right:1em; float:right; font-size:xx-large; width:1em; height:1em; box-shadow:0 0 0 1px }
+	>input{ direction:initial; position:sticky; top:2em; margin-right:1em; float:right; font-size:xx-large; width:1em; height:1em; box-shadow:0 0 0 1px canvas}
 	>label{ direction:initial; text-align:center; font-size:large; font-weight:bold; display:block; width:100%; padding-top:1mm; white-space:pre;
 		&:first-of-type{ text-align:right; font-size:revert; font-weight:revert; padding-top:revert }
 		&:is(:target,:active,:hover,:focus)+select>optgroup>option:not(:checked){ background-color:highlight }
