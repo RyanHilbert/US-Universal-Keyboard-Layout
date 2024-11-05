@@ -31,7 +31,7 @@ val html = StringBuilder("""<!DOCTYPE html>
 <style>:root{color-scheme:dark light;>body{margin:0;>form{
 >search{ direction:rtl; overflow-y:auto; float:left; position:sticky; top:0; height:100vh; margin-right:1px;
 	>nav{ direction:initial; width:100%; margin-bottom:1mm; position:sticky; top:0; background-color:canvas;
-		>button{ position:relative; font-size:xx-large; aspect-ratio:1; width:calc(100%/3); contain:strict; box-shadow:0 0 0 1px canvas;
+		>button{ position:relative; font-size:xx-large; aspect-ratio:1; width:calc(100%/3); contain:strict; box-shadow:0 0 0 1px inset canvas;
 			&:after{ position:absolute; font-size:initial; right:0; bottom:0; content:'📥' }
 			&:first-child:after{ margin:auto; left:0; height:70%; content:'❓' }
 		}
