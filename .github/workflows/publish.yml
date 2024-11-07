@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   publish:
-    runs-on: []
+    runs-on: github-hosted
     steps:
       - uses: actions/checkout@main
       - run: kotlinc *.kt -include-runtime -d .jar -jdk-home $JAVA_HOME_21_X64
