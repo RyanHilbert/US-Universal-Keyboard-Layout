@@ -73,6 +73,7 @@ val html = StringBuilder("""<!DOCTYPE html>
 					justify-content:center;
 					text-align-last:center
 				}
+				&:disabled:after{ content:'🚧' }
 			}
 		}
 	}
@@ -133,7 +134,7 @@ fun main(){
 		else if(c!=category||d!=direction||s!=script)html.append("</span><span class='$s $d $c'>")
 		if(b in CONDENSED){
 			if(char == b.chars.first())
-				html.append("<button $SCRIPT_ID=$s $DIRCTN_ID=$d $CATGRY_ID=$c title='U+$id-U+${b.chars.last.id} ${b.toString().replace('_',' ')}' formaction=#${b.id}>&#x$id</button\n>")
+				html.append("<button disabled $SCRIPT_ID=$s $DIRCTN_ID=$d $CATGRY_ID=$c title='U+$id-U+${b.chars.last.id} ${b.toString().replace('_',' ')}' formaction=#${b.id} id=$id>&#x$id</button\n>")
 		}else html.append("<button $SCRIPT_ID=$s $DIRCTN_ID=$d $CATGRY_ID=$c$q title='U+$id $n' formaction=#$id id=$id>&#x$id</button\n>")
 		block=b; category=c; direction=d; script=s
 	}
