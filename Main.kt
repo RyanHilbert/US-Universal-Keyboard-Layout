@@ -21,7 +21,7 @@ val DIRCTN_ID=CharDirectionality::class.simpleName!!.uppercase().last{it!in Char
 val CONDENSED=setOf(CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A,CJK_UNIFIED_IDEOGRAPHS,HANGUL_SYLLABLES,HIGH_SURROGATES,HIGH_PRIVATE_USE_SURROGATES,LOW_SURROGATES,PRIVATE_USE_AREA)
 
 //selects all options when associated label is interacted with
-val FN="for(var g of document.getElementById(this.htmlFor).children)for(var o of g.children)o.selected=true"
+val FN="for(var g of document.getElementById(this.htmlFor).children)for(var o of g.children)o.selected=false"
 val JS="onclick='$FN' onkeypress='$FN'"
 
 val html = StringBuilder("""<!DOCTYPE html>
@@ -39,7 +39,7 @@ val html = StringBuilder("""<!DOCTYPE html>
 	>input{ direction:initial; position:sticky; top:2em; margin-right:1em; float:right; font-size:xx-large; width:1em; height:1em; box-shadow:0 0 0 1px canvas}
 	>label{ direction:initial; text-align:center; font-size:large; font-weight:bold; display:block; width:100%; padding-top:1mm; white-space:pre;
 		&:first-of-type{ text-align:right; font-size:revert; font-weight:revert; padding-top:revert }
-		&:is(:target,:active,:hover,:focus)+select>optgroup>option:not(:checked){ background-color:highlight }
+		&:is(:target,:active,:hover,:focus)+select>optgroup>option{ background-color:graytext }
 	}
 	>select{ direction:initial; display:block; width:100%; overflow-y:auto; text-align-last:justify;
 		option{ padding-right:1mm }
@@ -78,10 +78,10 @@ val html = StringBuilder("""<!DOCTYPE html>
 		}
 	}
 }}}}${(CharDirectionality.entries.map{it.code}.toSet()+CharCategory.entries.map{it.code}+UnicodeScriptFamily.values().flatMap{it}.map{it.code}).joinToString(""){"""
-search#$SEARCH_ID:has(#$it:not(:checked))+main>section>span.$it,"""}}${UnicodeBlockGroup.values().flatMap{it}.joinToString(""){"""
-search#$SEARCH_ID:has(#_${it.id}:not(:checked))+main>section#${it.cssID},"""}}
-search#$SEARCH_ID:has(#$SEQ_ID:checked)+main>section>span>button:not([$SEQ_ID]),
-search#$SEARCH_ID:has(#$SEQ_ID:indeterminate)+main>section>span>button[$SEQ_ID]{display:none}
+#$SEARCH_ID:has(#${when(it.toString().length){1->DIRCTN_ID;2->CATGRY_ID;else->SCRIPT_ID}} :checked):has(#$it:not(:checked))+main>section>span.$it,"""}}${UnicodeBlockGroup.values().flatMap{it}.joinToString(""){"""
+#$SEARCH_ID:has(#$BLOCK_ID :checked):has(#_${it.id}:not(:checked))+main>section#${it.cssID},"""}}
+#$SEARCH_ID:has(#$SEQ_ID:checked)+main>section>span>button:not([$SEQ_ID]),
+#$SEARCH_ID:has(#$SEQ_ID:indeterminate)+main>section>span>button[$SEQ_ID]{display:none}
 </style>
 <form>
 <search id=$SEARCH_ID>
@@ -94,22 +94,22 @@ search#$SEARCH_ID:has(#$SEQ_ID:indeterminate)+main>section>span>button[$SEQ_ID]{
 	<label for=$CATGRY_ID tabindex=0 $JS>Category</label>
 	<select id=$CATGRY_ID multiple size=${CharCategory.entries.size+CharCategory.entries.map{it.code.first()}.toSet().size}>${CharCategory.entries.map{when(val c=it.code.first()){'C'->'L' else->c}}.toSet().plus('C').joinToString(""){ g->"""
 		<optgroup label=${CharCategory.entries.first{it.code.startsWith(g)}.name.substringAfterLast('_',"Other").lowercase().capitalize()}>"""+CharCategory.entries.drop(1).plus(UNASSIGNED).filter{it.code.startsWith(g)}.joinToString(""){"""
-			<option selected id=${it.code} label=${it.label}>"""}}}
+			<option id=${it.code} label=${it.label}>"""}}}
 	</select>
 	<label for=$SCRIPT_ID tabindex=0 $JS>Script	</label>
 	<select id=$SCRIPT_ID multiple size=${UnicodeScriptFamily.values().sumOf{it.size+1}}>${UnicodeScriptFamily.values().joinToString(""){g->"""
 		<optgroup label=${g.label}>"""+g.joinToString(""){"""
-			<option selected id=${it.code} label=${it.label}>"""}}}
+			<option id=${it.code} label=${it.label}>"""}}}
 	</select>
 	<label for=$DIRCTN_ID tabindex=0 $JS>Direction	</label>
 	<select id=$DIRCTN_ID multiple size=${CharDirectionality.entries.map{it.code}.toSet().size+CharDirectionality.entries.map{it.strength}.toSet().size}>${CharDirectionality.entries.drop(1).map{it.strength}.toSet().joinToString(""){g->"""
 		<optgroup label=$g>"""+CharDirectionality.entries.drop(1).plus(UNDEFINED).filter{it.strength==g&&it<=LEFT_TO_RIGHT_EMBEDDING}.joinToString(""){"""
-			<option selected id=${it.code} label=${it.label}>"""}}}
+			<option id=${it.code} label=${it.label}>"""}}}
 	</select>
 	<label for=$BLOCK_ID tabindex=0 $JS>Block	</label>
 	<select id=$BLOCK_ID multiple size=${UnicodeBlockGroup.values().sumOf{it.size+1}}>${UnicodeBlockGroup.values().joinToString(""){g->"""
 		<optgroup label=${g.label}>"""+g.joinToString(""){"""
-			<option selected id=_${it.id} label=${it.label}>"""}}}
+			<option id=_${it.id} label=${it.label}>"""}}}
 	</select>
 </search>
 <main>
