@@ -68,8 +68,8 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char, Node> =mutableMapOf()
 			val set:MutableSet<Node> = mutableSetOf()
 			val n = Node()
 			for(node in nodes)if(node !is Leaf){
-				set += node.getOrPut(this[i].toUpperCase()){n}
-				set += node.getOrPut(this[i].toLowerCase()){n}
+				set += node.getOrPut(this[i].uppercaseChar()){n}
+				set += node.getOrPut(this[i].lowercaseChar()){n}
 			}
 			if(set.isEmpty())throw IllegalStateException("$this -> ${chars.first} attempted to overwrite ${substring(0,1)} -> ${nodes.first()}")
 			nodes = set
@@ -78,14 +78,14 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char, Node> =mutableMapOf()
 		val leaf2 = if(chars.first == chars.second) leaf1 else Leaf(chars.second)
 		for(node in nodes)if(node !is Leaf){
 			nodes = EMPTY_SET as Set<Node>
-			val removed1 = node.put(this[length-1].toUpperCase(),leaf1)
-			val removed2 = node.put(this[length-1].toLowerCase(),leaf2)
+			val removed1 = node.put(this[length-1].uppercaseChar(),leaf1)
+			val removed2 = node.put(this[length-1].lowercaseChar(),leaf2)
 			if(null!=removed1 && leaf1!=removed1)throw IllegalStateException("$this -> $leaf1 attempted to overwrite $this -> $removed1")
 			if(null!=removed2 && leaf2!=removed2)throw IllegalStateException("$this -> $leaf2 attempted to overwrite $this -> $removed2")
 		}
 		if(nodes !== EMPTY_SET)throw IllegalStateException("$this -> ${chars.first} attempted to overwrite $this -> ${nodes.firstOrNull()}")
-		leaves.put(chars.first,toString().toUpperCase())
-		leaves.put(chars.second,toString().toLowerCase())
+		leaves.put(chars.first,toString().uppercase())
+		leaves.put(chars.second,toString().lowercase())
 		return this@Node
 	}
 
@@ -114,7 +114,7 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char, Node> =mutableMapOf()
 			it.script in setOf(COMMON,LATIN,GREEK) && "CJK" !in it.block.toString() && "ANA" !in it.block.toString()
 		}- KEYBOARD).toSet()
 
-		fun Any?.toTitleString() = toString().toLowerCase().split('_').map{s->if(s.length>2)s.capitalize()else s}.joinToString(" ")
+		fun Any?.toTitleString() = toString().lowercase().split('_').map{s->if(s.length>2)s.capitalize()else s}.joinToString(" ")
 		val Any.hex:String get() = String.format("%04X",hashCode())
 		val Char.name get() = getName(code)?:""
 		val Char.block get() = UnicodeBlock.of(this)
@@ -466,3 +466,4 @@ open class Node(var id:Char=MIN_VALUE,map:MutableMap<Char, Node> =mutableMapOf()
 		}
 	}
 }
+
